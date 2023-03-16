@@ -17,8 +17,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class UserResource {
     private final UserService userService;
-
-
+    
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());

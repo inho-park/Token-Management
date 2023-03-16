@@ -39,11 +39,13 @@ public class UserserviceApplication {
             userService.saveUser(new User(null,"ddd","ddd1","ddd2",new ArrayList<>()));
 
             userService.addRoleToUser("aaa1","ROLE_USER");
+
             userService.addRoleToUser("bbb1","ROLE_USER");
             userService.addRoleToUser("bbb1","ROLE_MANAGER");
-            userService.addRoleToUser("ccc1","ROLE_USER");
+
             userService.addRoleToUser("ccc1","ROLE_MANAGER");
             userService.addRoleToUser("ccc1","ROLE_ADMIN");
+
             userService.addRoleToUser("ddd1","ROLE_USER");
             userService.addRoleToUser("ddd1","ROLE_MANAGER");
             userService.addRoleToUser("ddd1","ROLE_ADMIN");
