@@ -32,19 +32,28 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try {
+                    // local 에서 사용할 GrantType 으로 가정하여 Bearer 만 받음
                     String token = authorizationHeader.substring("Bearer ".length());
+                    // token 을 생성할 때 사용한 알고리즘과 일치
                     Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                    // 토큰 검증 객체를 생성한 후 알고리즘 주기
                     JWTVerifier verifier = JWT.require(algorithm).build();
+                    // 토큰 검증 객체에서 검증된 복호화된 토큰 변수 지정
                     DecodedJWT decodedJWT = verifier.verify(token);
+                    // 토큰에서 정보 빼내기
                     String username = decodedJWT.getSubject();
+                    // String[] 로 받은 authority 들을 Collection<SimpleGrantAuthority> 객체에 담기
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
                     Arrays.stream(roles).forEach(role -> {
                         authorities.add(new SimpleGrantedAuthority(role));
                     });
+                    // 가져온 정보들을 SecurityContext 에 넣을 authenticationToken 으로 만들기
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(username, null, authorities);
+                    // authenticationToken 을 추가하면서 회원정보가 SecurityContext 에 저장함
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    // 다음 순서의 filter 로 넘어가기 위해 doFilter() 실행
                     filterChain.doFilter(request, response);
                 }catch (RuntimeException e) {
                     log.error("Error logging in : {}", e.getMessage());
