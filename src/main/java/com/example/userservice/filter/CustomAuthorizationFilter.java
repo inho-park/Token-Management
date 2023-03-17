@@ -26,7 +26,7 @@ import java.util.Arrays;
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().equals("/api/login")) {
+        if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh")) {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -55,7 +55,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     // 다음 순서의 filter 로 넘어가기 위해 doFilter() 실행
                     filterChain.doFilter(request, response);
-                }catch (RuntimeException e) {
+                }catch (Exception e) {
                     log.error("Error logging in : {}", e.getMessage());
                     response.setHeader("error", "you\'re monster");
                     response.setStatus(HttpStatus.FORBIDDEN.value());
